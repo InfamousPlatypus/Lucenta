@@ -2,16 +2,23 @@ import os
 import subprocess
 import tempfile
 import logging
+from lucenta.core.firewall import Firewall
 
 class DockerLocker:
     def __init__(self):
         self.logger = logging.getLogger("DockerLocker")
+        self.firewall = Firewall()
 
     def run_skill_command(self, skill_path: str, command: str, dependencies: list, approval_hook=None):
         """
         Runs a command in a sandboxed Docker container.
         """
-        # 1. HIL Guard Check
+        # 1. Firewall Check (Domain Whitelist)
+        if not self.firewall.validate_command_egress(command):
+            self.logger.error(f"Execution blocked by Domain Whitelist: {command}")
+            return None
+
+        # 2. HIL Guard Check
         if approval_hook:
             if not approval_hook(command):
                 self.logger.warning(f"Command rejected by HIL: {command}")

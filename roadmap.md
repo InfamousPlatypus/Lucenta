@@ -7,7 +7,7 @@
 - **Model Provider:** Hardware-aware routing (NCS2/iGPU vs. API).
 - **Security Auditor:** Static "Smell Test" for Node.js, Python, and C++.
 - **OpenClaw Bridge:** Translating SKILL.md to secure MCP Tools.
-- **Docker Locker:** Resource-capped sandbox for all external code.
+- **Docker Locker & Egress Filtering:** Resource-capped sandbox with strict domain whitelisting.
 - **Docling MCP:** Hardware-accelerated document intelligence.
 - **HIL Gateway:** Telegram & CLI human-approval interface.
 

@@ -18,10 +18,25 @@ async def async_main():
     )
 
     # Init components
-    local_config = {
-        "binary_path": os.getenv("LOCAL_MODEL_BINARY", "echo"),
-        "args": os.getenv("LOCAL_MODEL_ARGS", "Local model placeholder").split()
-    }
+    local_provider_type = os.getenv("LOCAL_PROVIDER", "local")
+    if local_provider_type == "ollama":
+        local_config = {
+            "provider_type": "ollama",
+            "model": os.getenv("OLLAMA_MODEL", "llama3"),
+            "base_url": os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        }
+    elif local_provider_type == "llamacpp":
+        local_config = {
+            "provider_type": "llamacpp",
+            "binary_path": os.getenv("LLAMACPP_BINARY", "llama-cli"),
+            "model_path": os.getenv("LLAMACPP_MODEL_PATH", "")
+        }
+    else:
+        local_config = {
+            "provider_type": "local",
+            "binary_path": os.getenv("LOCAL_MODEL_BINARY", "echo"),
+            "args": os.getenv("LOCAL_MODEL_ARGS", "Local model placeholder").split()
+        }
 
     external_config = {
         "provider": "openai",
@@ -31,7 +46,9 @@ async def async_main():
         }
     }
 
-    triage = TriageEngine(local_config, external_config)
+    # Extract provider_type from local_config for TriageEngine
+    t_local_type = local_config.pop("provider_type")
+    triage = TriageEngine({"provider": t_local_type, "kwargs": local_config}, external_config)
     session = SessionManager()
     memory = ProjectMemory()
     scheduler = TaskRunner()

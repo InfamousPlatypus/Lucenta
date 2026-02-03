@@ -13,7 +13,7 @@ class TestLucentaCore(unittest.TestCase):
         self.assertIn("hello", res)
 
     def test_triage_engine(self):
-        local_config = {"binary_path": "echo", "args": ["local"]}
+        local_config = {"provider": "local", "kwargs": {"binary_path": "echo", "args": ["local"]}}
         external_config = {"provider": "openai", "kwargs": {"api_key": "test"}}
         engine = TriageEngine(local_config, external_config)
         # Should default to local if not struggling

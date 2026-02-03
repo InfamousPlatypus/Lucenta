@@ -31,9 +31,19 @@ OPENAI_API_KEY=
 ANTHROPIC_API_KEY=
 GEMINI_API_KEY=
 
-# Local Model Config (llama.cpp or similar)
+# Local Model Config
+# Options for LOCAL_PROVIDER: local, ollama, llamacpp
+LOCAL_PROVIDER=local
 LOCAL_MODEL_BINARY=echo
 LOCAL_MODEL_ARGS="[Local Mode] System load low, using local echo."
+
+# Ollama Config
+OLLAMA_MODEL=llama3
+OLLAMA_BASE_URL=http://localhost:11434
+
+# llama.cpp Config
+LLAMACPP_BINARY=llama-cli
+LLAMACPP_MODEL_PATH=models/7b/ggml-model-f16.gguf
 
 # Communications
 TELEGRAM_BOT_TOKEN=

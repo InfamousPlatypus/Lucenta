@@ -19,7 +19,10 @@ class TriageEngine:
         # We might not want to initialize them immediately if we don't have all keys,
         # but for Phase 1 this is fine.
         try:
-            self.local_provider = ProviderFactory.get_provider("local", **local_config)
+            self.local_provider = ProviderFactory.get_provider(
+                local_config.get("provider", "local"),
+                **local_config.get("kwargs", {})
+            )
         except Exception:
             self.local_provider = None
 

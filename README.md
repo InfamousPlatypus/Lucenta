@@ -25,7 +25,7 @@ python3 main.py
 ## 🛠 Phase 1 Architecture
 
 ### 1. Universal Backend & Triage
-Lucenta abstracts LLM providers (OpenAI, Anthropic, Gemini, and Local CLI). The **Triage Engine** monitors CPU and RAM. If the host is struggling, it automatically routes "Thought" tasks to a cheap external API (like GPT-4o-mini).
+Lucenta abstracts LLM providers (OpenAI, Anthropic, Gemini, **Ollama**, and **llama.cpp**). The **Triage Engine** monitors CPU and RAM. If the host is struggling, it automatically routes "Thought" tasks to a cheap external API (like GPT-4o-mini).
 
 ### 2. Security Smell Test
 Before any plugin runs, Lucenta's **Security Auditor** performs a static analysis scan. It flags:

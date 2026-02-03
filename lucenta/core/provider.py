@@ -73,15 +73,53 @@ class GeminiProvider(ModelProvider):
         response = self.model.generate_content(full_prompt)
         return response.text
 
+class OllamaProvider(ModelProvider):
+    def __init__(self, model: str = "llama3", base_url: str = "http://localhost:11434"):
+        self.model = model
+        self.base_url = base_url
+
+    def generate(self, prompt: str, system_prompt: Optional[str] = None) -> str:
+        import requests
+        url = f"{self.base_url}/api/generate"
+        payload = {
+            "model": self.model,
+            "prompt": prompt,
+            "system": system_prompt or "",
+            "stream": False
+        }
+        try:
+            response = requests.post(url, json=payload)
+            response.raise_for_status()
+            return response.json().get("response", "")
+        except Exception as e:
+            return f"Error calling Ollama: {e}"
+
+class LlamaCppProvider(LocalCLIProvider):
+    """
+    Specialized provider for llama.cpp CLI.
+    """
+    def __init__(self, binary_path: str, model_path: str, n_predict: int = 512, extra_args: Optional[List[str]] = None):
+        args = ["-m", model_path, "-n", str(n_predict)]
+        if extra_args:
+            args.extend(extra_args)
+        # llama.cpp usually takes prompt via -p
+        args.append("-p")
+        super().__init__(binary_path, args)
+
 class ProviderFactory:
     @staticmethod
     def get_provider(provider_type: str, **kwargs) -> ModelProvider:
+        provider_type = provider_type.lower()
         if provider_type == "openai":
             return OpenAIProvider(**kwargs)
         elif provider_type == "anthropic":
             return AnthropicProvider(**kwargs)
         elif provider_type == "gemini":
             return GeminiProvider(**kwargs)
+        elif provider_type == "ollama":
+            return OllamaProvider(**kwargs)
+        elif provider_type == "llamacpp":
+            return LlamaCppProvider(**kwargs)
         elif provider_type == "local":
             return LocalCLIProvider(**kwargs)
         else:

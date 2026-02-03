@@ -1,0 +1,9 @@
+psutil
+openai
+anthropic
+google-generativeai
+requests
+python-telegram-bot
+mcp
+pydantic
+python-dotenv

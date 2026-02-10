@@ -4,7 +4,7 @@ import logging
 import re
 
 class Firewall:
-    def __init__(self, config_path: str = "config.json"):
+    def __init__(self, config_path: str = "settings.json"):
         self.config_path = config_path
         self.logger = logging.getLogger("LucentaFirewall")
         self.safe_domains = self._load_whitelist()

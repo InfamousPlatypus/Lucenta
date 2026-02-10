@@ -10,6 +10,7 @@
 - **Docker Locker & Egress Filtering:** Resource-capped sandbox with strict domain whitelisting.
 - **Docling MCP:** Hardware-accelerated document intelligence.
 - **HIL Gateway:** Telegram & CLI human-approval interface.
+- **Frontend Integration:** Unified configuration with LlamaHUD.
 
 ## Phase 2: Sensory Expansion & Metal Trust
 **Focus:** Efficiency, Proactive Intelligence, and Hardware Promotion.

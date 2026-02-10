@@ -14,9 +14,9 @@ cd lucenta
 chmod +x setup.sh
 ./setup.sh
 
-# 3. Configure your API keys in .env
-# Fill in keys for OpenAI, Anthropic, or Gemini, and set up your Telegram bot token.
-nano .env
+# 3. Configure your API keys in settings.json or .env
+# Fill in keys for OpenAI, Anthropic, or Gemini. settings.json is shared with LlamaHUD.
+nano settings.json
 
 # 4. Start Lucenta
 python3 main.py

@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 import asyncio
 from dotenv import load_dotenv
@@ -17,13 +18,26 @@ async def async_main():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
+    # Load settings.json if exists
+    settings = {}
+    if os.path.exists("settings.json"):
+        try:
+            with open("settings.json", "r") as f:
+                settings = json.load(f)
+            logging.info("Loaded configuration from settings.json")
+        except Exception as e:
+            logging.error(f"Failed to load settings.json: {e}")
+
     # Init components
-    local_provider_type = os.getenv("LOCAL_PROVIDER", "local")
+    # Merge settings.json and environment variables
+    # Priority: Env > Settings
+    local_provider_type = os.getenv("LOCAL_PROVIDER") or settings.get("default_app", "local").lower()
     if local_provider_type == "ollama":
+        ollama_settings = settings.get("providers", {}).get("Ollama", {})
         local_config = {
             "provider_type": "ollama",
-            "model": os.getenv("OLLAMA_MODEL", "llama3"),
-            "base_url": os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+            "model": os.getenv("OLLAMA_MODEL") or ollama_settings.get("model", "llama3"),
+            "base_url": os.getenv("OLLAMA_BASE_URL") or ollama_settings.get("base_url", "http://localhost:11434")
         }
     elif local_provider_type == "llamacpp":
         local_config = {
@@ -38,11 +52,13 @@ async def async_main():
             "args": os.getenv("LOCAL_MODEL_ARGS", "Local model placeholder").split()
         }
 
+    external_provider = "openai" # Default
+    openai_settings = settings.get("providers", {}).get("OpenAI", {})
     external_config = {
-        "provider": "openai",
+        "provider": external_provider,
         "kwargs": {
-            "api_key": os.getenv("OPENAI_API_KEY", "missing"),
-            "model": "gpt-4o-mini"
+            "api_key": os.getenv("OPENAI_API_KEY") or openai_settings.get("api_key", "missing"),
+            "model": os.getenv("OPENAI_MODEL") or settings.get("default_model") or openai_settings.get("model", "gpt-4o-mini")
         }
     }
 

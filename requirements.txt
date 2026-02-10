@@ -7,3 +7,4 @@ python-telegram-bot
 mcp
 pydantic
 python-dotenv
+PyYAML

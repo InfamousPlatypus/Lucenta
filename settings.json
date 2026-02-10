@@ -1,0 +1,31 @@
+{
+    "default_app": "OpenAI",
+    "default_model": "gpt-4o-mini",
+    "providers": {
+        "Ollama": {
+            "model": "llama3",
+            "base_url": "http://localhost:11434"
+        },
+        "OpenAI": {
+            "api_key": "",
+            "model": "gpt-4o-mini"
+        },
+        "Anthropic": {
+            "api_key": "",
+            "model": "claude-3-5-sonnet-20240620"
+        }
+    },
+    "safe_domains": [
+        "api.openai.com",
+        "arxiv.org"
+    ],
+    "shell_execution": {
+        "enabled": true,
+        "safety_level": 1,
+        "safe_commands": [
+            "dir",
+            "ls",
+            "echo"
+        ]
+    }
+}

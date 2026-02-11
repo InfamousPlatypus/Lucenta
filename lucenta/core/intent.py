@@ -43,6 +43,33 @@ class NeuralIntentClassifier:
                 "how does the iss stay in orbit",
                 "tell me about the weather",
                 "why is the weather bad"
+            ],
+            "research": [
+                "research this",
+                "find information about",
+                "look up",
+                "gather info on",
+                "latest news on",
+                "current status of",
+                "tell me about"
+            ],
+            "deep_research": [
+                "deep research",
+                "comprehensive research",
+                "deep dive into",
+                "research this topic in depth",
+                "perform a complex analysis on",
+                "deep research the latest news on",
+                "deeply investigate",
+                "do a detailed study on"
+            ],
+            "greeting": [
+                "hello",
+                "hi",
+                "hey there",
+                "greetings",
+                "hi lucenta",
+                "hello lucenta"
             ]
         }
         self.vocab = self._build_vocab()
@@ -83,8 +110,14 @@ class NeuralIntentClassifier:
         return vectors
 
     def predict(self, text: str, threshold: float = 0.45) -> Optional[str]:
+        input_tokens = set(self._tokenize(text))
         input_vec = self._vectorize(text)
         
+        # KEYWORD OVERRIDE (High weight for "deep" related words)
+        deep_keywords = {"deep", "comprehensive", "exhaustively", "deepest", "depth"}
+        if input_tokens.intersection(deep_keywords) and ("research" in input_tokens or "investigate" in input_tokens or "study" in input_tokens):
+            return "deep_research"
+
         # Check if input vector is empty (no known words)
         if sum(input_vec) == 0:
             return None

@@ -141,6 +141,17 @@
                 "C:\\Users\\mark\\public-apis\\mcp-servers\\ibm-quantum\\dist\\index.js"
             ],
             "description": "Quantum computing backends - 3 tools"
+        },
+        "brave-search": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\brave-search\\dist\\index.js"
+            ],
+            "description": "Brave Search - Web, News, Local, Image search - 5 tools",
+            "env": {
+                "BRAVE_API_KEY": "your-brave-key-here"
+            }
         }
     }
 }

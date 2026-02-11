@@ -1,13 +1,17 @@
 import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
-from lucenta.gateway.session import SessionManager
+from typing import Dict, List
 
 class TelegramGateway:
-    def __init__(self, token: str, session_manager: SessionManager, triage_engine):
+    """
+    Telegram interface for Lucenta.
+    Delegates reasoning and tool execution to the central Orchestrator.
+    """
+    def __init__(self, token: str, orchestrator):
         self.token = token
-        self.session_manager = session_manager
-        self.triage_engine = triage_engine
+        self.orchestrator = orchestrator
+        self.user_histories: Dict[str, List[str]] = {}
 
         if not token:
             logging.warning("Telegram Token not provided. TelegramGateway will not function.")
@@ -20,48 +24,44 @@ class TelegramGateway:
         self.app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), self.handle_message))
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await update.message.reply_text("Lucenta at your service. Send me a message or a task.")
+        await update.message.reply_text("Lucenta at your service. I'm connected to the Central Orchestrator. Send me any task!")
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = str(update.effective_user.id)
         text = update.message.text
 
-        # Simple HIL simulation: if message is "OK" or "Yes", grant lease
-        if text.upper() in ["OK", "YES", "Y"]:
-            self.session_manager.grant_lease(user_id)
-            await update.message.reply_text("✅ Session lease granted for 30 minutes.")
-            return
+        if user_id not in self.user_histories:
+            self.user_histories[user_id] = []
 
-        # Check if user is asking for a task that needs approval
-        if not self.session_manager.is_authorized(user_id):
-            await update.message.reply_text(
-                f"⚠️ Action: '{text}' requires approval.\n"
-                "Reply 'OK' to authorize all tasks for 30 minutes."
+        # Sink to relay status updates to Telegram
+        async def sink(msg: str):
+            # In a more advanced version, we could use 'edit_message_text' for a live progress bar.
+            # For now, we'll send a simple follow-up for major milestones if needed.
+            logging.info(f"Telegram [{user_id}] Progress: {msg}")
+
+        try:
+            # We use the Orchestrator to handle the core logic
+            # Note: Orchestrator currently handles its own HIL for CLI. 
+            # For Telegram, we'll need to adapt HIL later, but for now it runs auto-approved or via general reasoning.
+            response = await self.orchestrator.process_message(
+                text, 
+                self.user_histories[user_id], 
+                sink
             )
-            return
 
-        # "Phase 1 Flow" simulation
-        if "arxiv" in text.lower():
-            await update.message.reply_text("🔍 Routing task to Arxiv plugin...")
-            # Simulate Auditor check
-            if hasattr(self, 'auditor'):
-                await update.message.reply_text("🛡️ Auditing plugin: arxiv-mcp...")
-                # Mock a scan of a tool file
-                label = self.auditor.get_security_label([{"file": "arxiv_tool.py", "risk_score": 2, "is_safe": True, "findings": []}])
-                await update.message.reply_text(f"📊 Security Label: {label['label']} (Risk: {label['overall_risk_score']})")
-
-            await update.message.reply_text("⚙️ Executing Docling for PDF parsing...")
-            # Simulate result storage
-            if hasattr(self, 'memory'):
-                project = "ArxivResearch"
-                self.memory.store_result(project, "summary.md", "Found 3 papers on LLM security.")
-                await update.message.reply_text(f"📂 Results saved to shared project folder: {project}")
-
-            await update.message.reply_text("Done! Summary is in the shared folder.")
-        else:
-            # General triage
-            response = self.triage_engine.generate(text)
             await update.message.reply_text(response)
+            
+            # Update local history for this specific user
+            self.user_histories[user_id].append(f"User: {text}")
+            self.user_histories[user_id].append(f"Assistant: {response}")
+
+            # Keep history manageable
+            if len(self.user_histories[user_id]) > 20:
+                self.user_histories[user_id] = self.user_histories[user_id][-20:]
+
+        except Exception as e:
+            logging.error(f"Telegram Error: {e}")
+            await update.message.reply_text(f"❌ System Error: {e}")
 
     def run(self):
         if self.app:

@@ -48,7 +48,15 @@ env/
 Thumbs.db
 
 # Project specific
-lucenta-shared/
+# Research Reports
+lucenta-shared/research/*
+!lucenta-shared/research/.gitkeep
+
+# Persistent Memory & Config
+lucenta-shared/**/*.txt
+lucenta-shared/config/*.json
+mcp-config.json
+
 lucenta_tasks.db
 public-apis/
 mcp-servers/

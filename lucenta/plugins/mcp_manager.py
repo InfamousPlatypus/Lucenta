@@ -178,3 +178,9 @@ class MCPServerManager:
         prompt += "\nYou can ask me to use these tools to fetch real-time data."
         return prompt
 
+    def shutdown(self):
+        """Cleanup logic for server manager."""
+        self.active_sessions.clear()
+        self.available_tools.clear()
+        logging.info("MCPServerManager shut down.")
+

@@ -159,7 +159,7 @@ def main():
         print("\nContinuing anyway... Lucenta may fall back to external APIs")
     
     # Check model
-    model_name = os.getenv("OLLAMA_MODEL", "qwen2.5-coder:1.5b-base")
+    model_name = os.getenv("DEFAULT_MODEL_NAME", "llama3.1:latest")
     if not check_model(model_name):
         print("\nContinuing anyway... Lucenta may encounter errors")
     

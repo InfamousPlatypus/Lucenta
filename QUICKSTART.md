@@ -54,8 +54,8 @@ python3 main.py
 Edit `.env` to customize:
 
 ```bash
-# Your smallest Ollama model (already configured)
-OLLAMA_MODEL=qwen2.5-coder:1.5b-base
+# Your local LLM configuration (e.g. Ollama, LlamaCpp)
+DEFAULT_MODEL_NAME=qwen2.5-coder:1.5b-base
 
 # Use Podman instead of Docker
 USE_PODMAN=true
@@ -224,6 +224,13 @@ Lucenta/
 - **Monitor resources**: Lucenta's triage engine will route to external APIs if local resources are constrained
 - **Use the smallest model**: `qwen2.5-coder:1.5b-base` is already configured for you
 - **Cross-platform**: Use `start.py` for consistent behavior across OS
+
+### 🔬 On-the-Fly Deep Research
+Lucenta can now trigger autonomous research loops directly in the chat.
+- **Trigger**: "Deep research that" or "Analyze this in depth".
+- **Workflow**: Plan -> Reflect -> Act -> Synthesize.
+- **Context**: Automatically uses your conversation history to inform the research goal.
+- **Efficiency**: Defaults to local models for planning to conserve API credits.
 
 ---
 

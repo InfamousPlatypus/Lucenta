@@ -17,13 +17,18 @@ async def async_main():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
-    # Init components
+    # Suppress noisy library logs
+    logging.getLogger("docling").setLevel(logging.WARNING)
+    logging.getLogger("primp").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("telegram").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
     local_provider_type = os.getenv("LOCAL_PROVIDER", "local")
     if local_provider_type == "ollama":
         local_config = {
             "provider_type": "ollama",
-            "model": os.getenv("OLLAMA_MODEL", "llama3"),
-            "base_url": os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+            "model": os.getenv("DEFAULT_MODEL_NAME", "llama3"),
+            "base_url": os.getenv("DEFAULT_MODEL_BASE_URL", "http://localhost:11434")
         }
     elif local_provider_type == "llamacpp":
         local_config = {
@@ -89,21 +94,22 @@ async def async_main():
         logging.warning("No MCP servers configured. Check mcp-config.json")
         mcp_manager = None
 
+    # Central Orchestrator
+    from lucenta.core.orchestrator import Orchestrator
+    orchestrator = Orchestrator(triage, session, mcp_manager, memory, scheduler)
+
     # CLI Gateway - Add interaction via CMD
     from lucenta.gateway.cli import CLIGateway
-    cli_gateway = CLIGateway(triage, session, mcp_manager, memory, scheduler)
+    cli_gateway = CLIGateway(orchestrator)
     cli_task = asyncio.create_task(cli_gateway.start())
 
 
 
     # Telegram Gateway
+    # Telegram Gateway
     telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
     if telegram_token:
-        tg_gateway = TelegramGateway(telegram_token, session, triage)
-        # In a more advanced implementation, we'd pass auditor/memory to the gateway
-        tg_gateway.auditor = auditor
-        tg_gateway.memory = memory
-
+        tg_gateway = TelegramGateway(telegram_token, orchestrator)
         await tg_gateway.app.initialize()
         await tg_gateway.app.start()
         await tg_gateway.app.updater.start_polling()
@@ -119,8 +125,7 @@ async def async_main():
             os.getenv("EMAIL_SMTP_SERVER", "smtp.gmail.com"),
             email_user,
             os.getenv("EMAIL_PASS", ""),
-            session,
-            triage
+            orchestrator
         )
         email_gateway.start_polling()
         logging.info("Email Gateway started.")
@@ -137,6 +142,20 @@ async def async_main():
                 await asyncio.sleep(1)
     except KeyboardInterrupt:
         logging.info("Shutting down...")
+    finally:
+        # Graceful cleanup
+        logging.info("Lucenta: Cleaning up components...")
+        if telegram_token and 'tg_gateway' in locals():
+            await tg_gateway.app.stop()
+            await tg_gateway.app.shutdown()
+        
+        if email_user and 'email_gateway' in locals():
+            email_gateway.stop_polling()
+            
+        if mcp_manager:
+            mcp_manager.shutdown()
+        
+        logging.info("✅ Lucenta stopped.")
 
 
 if __name__ == "__main__":

@@ -7,3 +7,5 @@ python-telegram-bot
 mcp
 pydantic
 python-dotenv
+docling
+ddgs

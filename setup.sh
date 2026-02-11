@@ -26,37 +26,40 @@ fi
 if [ ! -f .env ]; then
     echo "Generating .env template..."
     cat <<EOF > .env
-# Model Providers
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
-GEMINI_API_KEY=
-
-# Local Model Config
-# Options for LOCAL_PROVIDER: local, ollama, llamacpp
-LOCAL_PROVIDER=local
-LOCAL_MODEL_BINARY=echo
-LOCAL_MODEL_ARGS="[Local Mode] System load low, using local echo."
-
-# Ollama Config
-OLLAMA_MODEL=llama3
+# Lucenta Configuration
+# Local LLM Provider - Using Ollama with smallest model
+LOCAL_PROVIDER=ollama
+OLLAMA_MODEL=qwen2.5-coder:1.5b-base
 OLLAMA_BASE_URL=http://localhost:11434
 
-# llama.cpp Config
-LLAMACPP_BINARY=llama-cli
-LLAMACPP_MODEL_PATH=models/7b/ggml-model-f16.gguf
+# llama.cpp Config (alternative)
+# LLAMACPP_BINARY=llama-cli
+# LLAMACPP_MODEL_PATH=/path/to/model.gguf
 
-# Communications
-TELEGRAM_BOT_TOKEN=
-EMAIL_IMAP_SERVER=imap.gmail.com
-EMAIL_SMTP_SERVER=smtp.gmail.com
-EMAIL_USER=
-EMAIL_PASS=
+# External API fallback (optional - for when local resources are constrained)
+# OPENAI_API_KEY=your-key-here
+# ANTHROPIC_API_KEY=your-key-here
+# GEMINI_API_KEY=your-key-here
 
-# System Triage
-CPU_THRESHOLD=70
-MEM_THRESHOLD=70
+# Communication Gateways (optional)
+# TELEGRAM_BOT_TOKEN=your-telegram-token
+# EMAIL_USER=your-email@example.com
+# EMAIL_PASS=your-email-password
+# EMAIL_IMAP_SERVER=imap.gmail.com
+# EMAIL_SMTP_SERVER=smtp.gmail.com
+
+# MCP Server Configuration
+MCP_SERVERS_PATH=/path/to/mcp-servers
+# Set to true to use Podman instead of Docker (default: false)
+USE_PODMAN=false
+
+# NASA API Key (optional)
+# NASA_API_KEY=DEMO_KEY
+
+# Hugging Face API Token (optional)
+# HUGGING_FACE_API_TOKEN=hf_your_token_here
 EOF
-    echo "✅ .env template created. Please fill in your API keys."
+    echo "✅ .env template created. Please edit it with your configuration."
 fi
 
 # 4. Install dependencies

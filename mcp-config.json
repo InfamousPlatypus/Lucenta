@@ -1,0 +1,146 @@
+{
+    "mcpServers": {
+        "arxiv": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\arxiv\\dist\\index.js"
+            ],
+            "description": "Academic paper search - 5 tools"
+        },
+        "open-notify": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\open-notify\\dist\\index.js"
+            ],
+            "description": "ISS tracking - 4 tools"
+        },
+        "nominatim": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\nominatim\\dist\\index.js"
+            ],
+            "description": "Geocoding (address ↔ coordinates) - 6 tools"
+        },
+        "open-meteo": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\open-meteo\\dist\\index.js"
+            ],
+            "description": "Weather forecasts - 4 tools"
+        },
+        "usgs-earthquake": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\usgs-earthquake\\dist\\index.js"
+            ],
+            "description": "Earthquake data - 5 tools"
+        },
+        "pubmed": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\pubmed\\dist\\index.js"
+            ],
+            "description": "Medical research papers - 3 tools"
+        },
+        "gbif": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\gbif\\dist\\index.js"
+            ],
+            "description": "Biodiversity data - 6 tools"
+        },
+        "nasa-apod": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\nasa-apod\\dist\\index.js"
+            ],
+            "description": "Astronomy Picture of the Day - 4 tools",
+            "env": {
+                "NASA_API_KEY": "DEMO_KEY"
+            }
+        },
+        "nasa-asteroids": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\nasa-asteroids\\dist\\index.js"
+            ],
+            "description": "Near-Earth Object tracking - 5 tools",
+            "env": {
+                "NASA_API_KEY": "DEMO_KEY"
+            }
+        },
+        "uk-carbon": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\uk-carbon\\dist\\index.js"
+            ],
+            "description": "UK carbon intensity - 8 tools"
+        },
+        "openaq": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\openaq\\dist\\index.js"
+            ],
+            "description": "Air quality data - 6 tools"
+        },
+        "geocode-xyz": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\geocode-xyz\\dist\\index.js"
+            ],
+            "description": "Batch geocoding - 3 tools"
+        },
+        "open-elevation": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\open-elevation\\dist\\index.js"
+            ],
+            "description": "Elevation data - 2 tools"
+        },
+        "overpass": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\overpass\\dist\\index.js"
+            ],
+            "description": "Advanced OpenStreetMap queries - 5 tools"
+        },
+        "hugging-face": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\hugging-face\\dist\\index.js"
+            ],
+            "description": "ML datasets & models - 6 tools"
+        },
+        "roboflow": {
+            "enabled": false,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\roboflow\\dist\\index.js"
+            ],
+            "description": "Computer vision models - 4 tools"
+        },
+        "ibm-quantum": {
+            "enabled": true,
+            "command": "node",
+            "args": [
+                "C:\\Users\\mark\\public-apis\\mcp-servers\\ibm-quantum\\dist\\index.js"
+            ],
+            "description": "Quantum computing backends - 3 tools"
+        }
+    }
+}

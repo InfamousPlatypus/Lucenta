@@ -1,0 +1,65 @@
+﻿node : file:///C:/Users/mark
+/public-apis/mcp-servers/arx
+iv/node_modules/@modelcontex
+tprotocol/sdk/dist/esm/serve
+r/index.js:242
+At line:1 char:1
++ node C:\Users\mark\public-
+apis\mcp-servers\arxiv\dist\
+index.js 2>&1 | ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (file:  
+  ///C:/User...er/index.j   
+ s:242:String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+                    throw 
+new Error(`Server does not 
+support tools (required for 
+${method})`);
+                          ^
+
+Error: Server does not 
+support tools (required for 
+tools/list)
+    at Server.assertRequestH
+andlerCapability (file:///C:
+/Users/mark/public-apis/mcp-
+servers/arxiv/node_modules/@
+modelcontextprotocol/sdk/dis
+t/esm/server/index.js:242:27
+)
+    at 
+Server.setRequestHandler (fi
+le:///C:/Users/mark/public-a
+pis/mcp-servers/arxiv/node_m
+odules/@modelcontextprotocol
+/sdk/dist/esm/shared/protoco
+l.js:880:14)
+    at 
+Server.setRequestHandler (fi
+le:///C:/Users/mark/public-a
+pis/mcp-servers/arxiv/node_m
+odules/@modelcontextprotocol
+/sdk/dist/esm/server/index.j
+s:149:22)
+    at file:///C:/Users/mark
+/public-apis/mcp-servers/arx
+iv/dist/index.js:12:8
+    at ModuleJob.run (node:i
+nternal/modules/esm/module_j
+ob:343:25)
+    at async onImport.traceP
+romise.__proto__ (node:inter
+nal/modules/esm/loader:665:2
+6)
+    at async asyncRunEntryPo
+intWithESMLoader (node:inter
+nal/modules/run_main:117:5)
+
+Node.js v22.21.0

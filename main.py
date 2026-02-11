@@ -38,17 +38,30 @@ async def async_main():
             "args": os.getenv("LOCAL_MODEL_ARGS", "Local model placeholder").split()
         }
 
-    external_config = {
-        "provider": "openai",
-        "kwargs": {
-            "api_key": os.getenv("OPENAI_API_KEY", "missing"),
-            "model": "gpt-4o-mini"
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if openai_key and openai_key != "your-key-here":
+        external_config = {
+            "provider": "openai",
+            "kwargs": {
+                "api_key": openai_key,
+                "model": "gpt-4o-mini"
+            }
         }
-    }
+    else:
+        external_config = None
+
+    # Thresholds from env or defaults
+    cpu_threshold = float(os.getenv("CPU_THRESHOLD", 70.0))
+    mem_threshold = float(os.getenv("MEM_THRESHOLD", 70.0))
 
     # Extract provider_type from local_config for TriageEngine
     t_local_type = local_config.pop("provider_type")
-    triage = TriageEngine({"provider": t_local_type, "kwargs": local_config}, external_config)
+    triage = TriageEngine(
+        {"provider": t_local_type, "kwargs": local_config}, 
+        external_config,
+        cpu_threshold=cpu_threshold,
+        mem_threshold=mem_threshold
+    )
     session = SessionManager()
     memory = ProjectMemory()
     scheduler = TaskRunner()
@@ -56,6 +69,32 @@ async def async_main():
     auditor = SecurityAuditor(triage)
 
     logging.info("Lucenta Phase 1 components initialized.")
+
+    # Initialize MCP Server Manager
+    from lucenta.plugins.mcp_manager import MCPServerManager
+    mcp_manager = MCPServerManager()
+    
+    if mcp_manager.servers:
+        logging.info(f"Initializing {len(mcp_manager.servers)} MCP servers...")
+        await mcp_manager.initialize_all_servers()
+        
+        # Log available tools
+        server_info = mcp_manager.get_server_info()
+        total_tools = sum(s['tool_count'] for s in server_info)
+        logging.info(f"MCP Ready: {len(server_info)} servers, {total_tools} tools available")
+        
+        for info in server_info:
+            logging.info(f"  - {info['name']}: {info['tool_count']} tools - {info['description']}")
+    else:
+        logging.warning("No MCP servers configured. Check mcp-config.json")
+        mcp_manager = None
+
+    # CLI Gateway - Add interaction via CMD
+    from lucenta.gateway.cli import CLIGateway
+    cli_gateway = CLIGateway(triage, session, mcp_manager, memory, scheduler)
+    cli_task = asyncio.create_task(cli_gateway.start())
+
+
 
     # Telegram Gateway
     telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -90,10 +129,15 @@ async def async_main():
 
     # Keep the main loop running
     try:
-        while True:
-            await asyncio.sleep(1)
+        # Wait for CLI task to finish if it's running
+        if cli_task:
+            await cli_task
+        else:
+            while True:
+                await asyncio.sleep(1)
     except KeyboardInterrupt:
         logging.info("Shutting down...")
+
 
 if __name__ == "__main__":
     try:

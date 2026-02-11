@@ -31,11 +31,17 @@ class LucentaMCPClient:
                 return result.tools
 
 class DoclingSandboxedClient(LucentaMCPClient):
-    def __init__(self, docker_image: str = "mcp/docling"):
-        # We use docker run to sandbox the MCP server
+    def __init__(self, docker_image: str = "mcp/docling", use_podman: bool = None):
+        # Support both Docker (default) and Podman
+        # Check environment variable if not explicitly set
+        if use_podman is None:
+            use_podman = os.getenv("USE_PODMAN", "false").lower() == "true"
+        
+        container_cmd = "podman" if use_podman else "docker"
+        
         # Mount current directory to /data for local file access if needed
         super().__init__(
-            command="docker",
+            command=container_cmd,
             args=["run", "-i", "--rm", "-v", f"{os.getcwd()}:/data", docker_image]
         )
 

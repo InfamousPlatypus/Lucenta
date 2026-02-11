@@ -1,3 +1,4 @@
+from typing import Optional, List
 import psutil
 from lucenta.core.provider import ProviderFactory, ModelProvider
 
@@ -26,13 +27,17 @@ class TriageEngine:
         except Exception:
             self.local_provider = None
 
-        try:
-            self.external_provider = ProviderFactory.get_provider(
-                external_config.get("provider", "openai"),
-                **external_config.get("kwargs", {})
-            )
-        except Exception:
+        if external_config:
+            try:
+                self.external_provider = ProviderFactory.get_provider(
+                    external_config.get("provider", "openai"),
+                    **external_config.get("kwargs", {})
+                )
+            except Exception:
+                self.external_provider = None
+        else:
             self.external_provider = None
+
 
     def get_system_load(self):
         # interval=None is non-blocking
@@ -49,8 +54,20 @@ class TriageEngine:
 
         return self.local_provider if self.local_provider else self.external_provider
 
+    def get_intent(self, text: str) -> Optional[str]:
+        """
+        Fast Path: Intent Detection.
+        Executed on NPU Layer (simulated via vector matching).
+        """
+        if not hasattr(self, 'intent_classifier'):
+            from lucenta.core.intent import NeuralIntentClassifier
+            self.intent_classifier = NeuralIntentClassifier()
+            
+        return self.intent_classifier.predict(text)
+
     def generate(self, prompt: str, task_type: str = "Thought", system_prompt: str = None) -> str:
         provider = self.select_provider(task_type)
         if not provider:
             return "Error: No model provider available."
         return provider.generate(prompt, system_prompt=system_prompt)
+

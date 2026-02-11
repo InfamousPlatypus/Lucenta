@@ -61,3 +61,26 @@ class ProjectMemory:
         if not os.path.exists(self.base_path):
             return []
         return [d for d in os.listdir(self.base_path) if os.path.isdir(os.path.join(self.base_path, d))]
+
+    def retrieve_result(self, project_name: str, filename: str) -> Optional[str]:
+        file_path = os.path.join(self.base_path, project_name, filename)
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                return f.read()
+        return None
+
+    def get_project_context(self, project_name: str, max_chars: int = 2000) -> str:
+        """Retrieve all files in a project as a single context string"""
+        project_path = os.path.join(self.base_path, project_name)
+        if not os.path.exists(project_path):
+            return ""
+        
+        context = []
+        for filename in os.listdir(project_path):
+            content = self.retrieve_result(project_name, filename)
+            if content:
+                context.append(f"--- File: {filename} ---\n{content}\n")
+        
+        full_context = "\n".join(context)
+        return full_context[:max_chars]
+
